@@ -61,13 +61,13 @@ const App: React.FC = () => {
     setInputs(prev => ({ ...prev, [name]: val }));
   };
 
-  const getAnalysis = async () => {
-    if (!results) return;
-    setLoadingAi(true);
-    const advice = await getTaxAdvice(results, inputs);
-    setAiAnalysis(advice);
-    setLoadingAi(false);
-  };
+  // const getAnalysis = async () => {
+  //   if (!results) return;
+  //   setLoadingAi(true);
+  //   const advice = await getTaxAdvice(results, inputs);
+  //   setAiAnalysis(advice);
+  //   setLoadingAi(false);
+  // };
 
   const chartData = useMemo(() => {
     if (!results) return [];
@@ -91,7 +91,7 @@ const App: React.FC = () => {
             <h1 className="text-xl font-bold text-gray-900 tracking-tight">Stipendio<span className="text-blue-600">Netto</span></h1>
           </div>
           <div className="hidden sm:flex items-center gap-4 text-sm text-gray-500">
-            <span className="flex items-center gap-1"><Info size={14} /> Aggiornato 2024</span>
+            <span className="flex items-center gap-1"><Info size={14} /> Aggiornato 2026</span>
           </div>
         </div>
       </header>
@@ -233,7 +233,7 @@ const App: React.FC = () => {
                 </div>
 
                 {/* AI Assistant Section */}
-                <div className="bg-white rounded-2xl border border-blue-100 overflow-hidden shadow-sm">
+                {/* <div className="bg-white rounded-2xl border border-blue-100 overflow-hidden shadow-sm">
                   <div className="bg-blue-50/50 px-6 py-4 flex items-center justify-between border-b border-blue-100">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
@@ -290,7 +290,7 @@ const App: React.FC = () => {
                       </div>
                     )}
                   </div>
-                </div>
+                </div> */}
               </>
             ) : (
               <div className="h-full flex items-center justify-center min-h-[400px]">
@@ -312,7 +312,7 @@ const App: React.FC = () => {
       {/* Footer Disclaimer */}
       <footer className="max-w-7xl mx-auto px-4 text-center mt-12 text-gray-400 text-xs">
         <p>
-          Questo strumento fornisce una stima indicativa basata sulle aliquote IRPEF 2024. 
+          Questo strumento fornisce una stima indicativa basata sulle aliquote IRPEF 2026. 
           I risultati non costituiscono consulenza finanziaria ufficiale.
         </p>
       </footer>

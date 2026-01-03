@@ -1,64 +1,65 @@
-
 import { TaxInputs, TaxResults } from '../types';
+import { TAX_CONFIG_2026 } from './taxConfig2026';
 
-/**
- * Simplified Italian Tax Calculator (2024 Brackets)
- * Warning: Real tax laws are complex. This serves as an accurate estimation tool.
- */
 export const calculateTaxes = (inputs: TaxInputs): TaxResults => {
-  const { ral, months, region } = inputs;
+  const { ral, months } = inputs;
+  const { inps, irpef, deductions, additionalTaxes } = TAX_CONFIG_2026;
 
-  // 1. Social Security (INPS) - Usually 9.19% for the employee
-  const inpsRate = 0.0919;
-  const inps = ral * inpsRate;
-  const taxableIncome = ral - inps;
+  // 1. INPS
+  const inpsAmount = ral * inps.employeeRate;
+  const taxableIncome = ral - inpsAmount;
 
-  // 2. IRPEF (2024 Simplified Brackets: 23%, 35%, 43%)
+  // 2. IRPEF progressiva
   let irpefBase = 0;
-  if (taxableIncome <= 28000) {
-    irpefBase = taxableIncome * 0.23;
-  } else if (taxableIncome <= 50000) {
-    irpefBase = (28000 * 0.23) + (taxableIncome - 28000) * 0.35;
-  } else {
-    irpefBase = (28000 * 0.23) + (22000 * 0.35) + (taxableIncome - 50000) * 0.43;
+  let previousLimit = 0;
+
+  for (const bracket of irpef.brackets) {
+    const taxablePortion = Math.min(
+      Math.max(taxableIncome - previousLimit, 0),
+      bracket.upTo - previousLimit
+    );
+
+    irpefBase += taxablePortion * bracket.rate;
+    previousLimit = bracket.upTo;
+
+    if (taxableIncome <= bracket.upTo) break;
   }
 
-  // 3. Deductions (Detrazioni da lavoro dipendente - 2024)
-  let deductions = 0;
-  if (taxableIncome <= 15000) {
-    deductions = 1880;
-  } else if (taxableIncome <= 28000) {
-    deductions = 1910 + 1190 * (28000 - taxableIncome) / 13000;
-  } else if (taxableIncome <= 50000) {
-    deductions = 1910 * (50000 - taxableIncome) / 22000;
-  } else {
-    deductions = 0;
+  // 3. Detrazioni lavoro dipendente
+  const d = deductions.employee;
+  let deduction = 0;
+
+  if (taxableIncome <= d.lowIncomeLimit) {
+    deduction = d.lowIncomeAmount;
+  } else if (taxableIncome <= d.midIncomeLimit) {
+    deduction =
+      d.midBaseAmount +
+      (d.midVariableAmount * (d.midIncomeLimit - taxableIncome)) / d.midRange;
+  } else if (taxableIncome <= d.highIncomeLimit) {
+    deduction =
+      (d.midBaseAmount * (d.highIncomeLimit - taxableIncome)) / d.highRange;
   }
 
-  // Cap IRPEF at 0
-  const irpef = Math.max(0, irpefBase - deductions);
+  const irpefNet = Math.max(0, irpefBase - deduction);
 
-  // 4. Regional and Municipal Additions (Averages)
-  const regionalRate = 0.016; // Average Italian region
-  const municipalRate = 0.008; // Average Italian municipality
-  
-  const regionalTax = taxableIncome * regionalRate;
-  const municipalTax = taxableIncome * municipalRate;
+  // 4. Addizionali
+  const regionalTax = taxableIncome * additionalTaxes.regionalRate;
+  const municipalTax = taxableIncome * additionalTaxes.municipalRate;
 
-  // 5. Net Calculation
-  const annualNet = taxableIncome - irpef - regionalTax - municipalTax;
-  const monthlyNet = annualNet / months;
+  // 5. Netto
+  const annualNet =
+    taxableIncome - irpefNet - regionalTax - municipalTax;
 
   return {
     ral,
-    inps,
+    inps: inpsAmount,
     taxableIncome,
-    irpef,
+    irpef: irpefNet,
     regionalTax,
     municipalTax,
-    deductions,
+    deductions: deduction,
     annualNet,
-    monthlyNet,
+    monthlyNet: annualNet / months,
     taxWedge: ral - annualNet
   };
 };
