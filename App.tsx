@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Calculator, 
   Euro, 
@@ -44,6 +44,7 @@ const App: React.FC = () => {
   const [results, setResults] = useState<TaxResults | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<string>('');
   const [loadingAi, setLoadingAi] = useState(false);
+  const resultsRef = useRef<HTMLElement | null>(null);
 
   const performCalculation = () => {
     const res = calculateTaxes(inputs);
@@ -51,9 +52,10 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    performCalculation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (results && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [results]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -109,10 +111,13 @@ const App: React.FC = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* Form Section */}
-          <div className="lg:col-span-4 space-y-6">
+        <div className="space-y-12">
+          <section className="max-w-3xl mx-auto space-y-6">
+            <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+              <span className="px-2.5 py-1 rounded-full bg-slate-200/70 text-slate-600 dark:bg-slate-800/80 dark:text-slate-300">Step 1</span>
+              Inserisci i dati
+            </div>
+
             <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-6 dark:bg-slate-800/70 dark:border-slate-700">
               <h2 className="text-lg font-semibold flex items-center gap-2">
                 <Euro className="text-blue-600 w-5 h-5 dark:text-cyan-400" />
@@ -135,7 +140,7 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-slate-200">Mensilità</label>
                     <select 
@@ -169,6 +174,7 @@ const App: React.FC = () => {
               >
                 Calcola Netto <ArrowRight size={18} />
               </button>
+              <p className="text-xs text-center text-slate-400 dark:text-slate-500">Dopo il calcolo scenderai automaticamente ai risultati.</p>
             </div>
 
             {/* Quick Summary Card */}
@@ -185,10 +191,20 @@ const App: React.FC = () => {
                 </div>
               </div>
             )}
-          </div>
+          </section>
 
-          {/* Results Section */}
-          <div className="lg:col-span-8 space-y-6">
+          <section ref={resultsRef} id="risultati" className="scroll-mt-24 space-y-6">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+                <span className="px-2.5 py-1 rounded-full bg-slate-200/70 text-slate-600 dark:bg-slate-800/80 dark:text-slate-300">Step 2</span>
+                Risultati
+              </div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Il tuo netto, in dettaglio</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                Una volta calcolato, scorri per vedere il breakdown completo tra tasse, contributi e netto finale.
+              </p>
+            </div>
+
             {results ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -305,19 +321,19 @@ const App: React.FC = () => {
                 </div> */}
               </>
             ) : (
-              <div className="h-full flex items-center justify-center min-h-[400px]">
-                <div className="text-center space-y-4">
+              <div className="h-full flex items-center justify-center min-h-[360px] border border-dashed border-slate-200 rounded-3xl dark:border-slate-700/70">
+                <div className="text-center space-y-4 px-6">
                   <div className="bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto dark:bg-slate-800">
                     <Calculator className="text-blue-600 w-8 h-8 dark:text-cyan-400" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold">Inizia il Calcolo</h3>
-                    <p className="text-gray-500 max-w-xs mx-auto dark:text-slate-400">Inserisci la tua RAL per visualizzare il breakdown completo dello stipendio netto.</p>
+                    <h3 className="text-lg font-bold">Aspetto i tuoi dati</h3>
+                    <p className="text-gray-500 max-w-xs mx-auto dark:text-slate-400">Compila il form e premi “Calcola Netto” per vedere grafici e dettagli.</p>
                   </div>
                 </div>
               </div>
             )}
-          </div>
+          </section>
         </div>
       </main>
 
