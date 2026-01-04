@@ -343,6 +343,7 @@ const App: React.FC = () => {
           Questo strumento fornisce una stima indicativa basata sulle aliquote IRPEF 2026. 
           I risultati non costituiscono consulenza finanziaria ufficiale.
         </p>
+        <p className="mt-2">© Marco Dalprato</p>
       </footer>
     </div>
   );
