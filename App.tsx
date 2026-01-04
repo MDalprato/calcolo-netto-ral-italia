@@ -29,7 +29,7 @@ import { TaxInputs, TaxResults, REGIONS } from './types';
 import { calculateTaxes } from './services/taxCalculator';
 import { getTaxAdvice } from './services/geminiService';
 
-const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#6366f1'];
+const COLORS = ['#22d3ee', '#38bdf8', '#a78bfa', '#34d399', '#fbbf24'];
 
 const App: React.FC = () => {
   const [inputs, setInputs] = useState<TaxInputs>({
@@ -79,19 +79,31 @@ const App: React.FC = () => {
     ];
   }, [results]);
 
+  const tooltipStyle = {
+    backgroundColor: '#0f172a',
+    color: '#e2e8f0',
+    borderRadius: '12px',
+    border: '1px solid #1e293b',
+    boxShadow: '0 12px 24px rgba(15, 23, 42, 0.4)',
+  };
+
+  const legendStyle = {
+    color: '#e2e8f0',
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 pb-12">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-12 dark:bg-slate-900 dark:text-slate-100">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-50">
+      <header className="bg-white border-b sticky top-0 z-50 dark:bg-slate-950/80 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="bg-blue-600 p-2 rounded-lg">
               <Calculator className="text-white w-5 h-5" />
             </div>
-            <h1 className="text-xl font-bold text-gray-900 tracking-tight">Stipendio<span className="text-blue-600">Netto</span></h1>
+            <h1 className="text-xl font-bold text-gray-900 tracking-tight dark:text-slate-100">Stipendio<span className="text-blue-600 dark:text-cyan-400">Netto</span></h1>
           </div>
-          <div className="hidden sm:flex items-center gap-4 text-sm text-gray-500">
-            <span className="flex items-center gap-1"><Info size={14} /> Aggiornato 2026</span>
+          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-slate-300">
+            <span className="hidden sm:flex items-center gap-1"><Info size={14} /> Aggiornato 2026</span>
           </div>
         </div>
       </header>
@@ -101,36 +113,36 @@ const App: React.FC = () => {
           
           {/* Form Section */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-6 dark:bg-slate-800/70 dark:border-slate-700">
               <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Euro className="text-blue-600 w-5 h-5" />
+                <Euro className="text-blue-600 w-5 h-5 dark:text-cyan-400" />
                 Configurazione RAL
               </h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Reddito Annuo Lordo (RAL)</label>
-                  <div className="relative">
-                    <input 
-                      type="number" 
-                      name="ral"
-                      value={inputs.ral}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-lg font-semibold"
-                      placeholder="es. 30000"
-                    />
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">€</div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-slate-200">Reddito Annuo Lordo (RAL)</label>
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        name="ral"
+                        value={inputs.ral}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-lg font-semibold dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-cyan-400"
+                        placeholder="es. 30000"
+                      />
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-400">€</div>
+                    </div>
                   </div>
-                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Mensilità</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-slate-200">Mensilità</label>
                     <select 
                       name="months"
                       value={inputs.months}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-cyan-400"
                     >
                       <option value={12}>12 Mesi</option>
                       <option value={13}>13 Mesi</option>
@@ -138,12 +150,12 @@ const App: React.FC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Regione</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-slate-200">Regione</label>
                     <select 
                       name="region"
                       value={inputs.region}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:focus:ring-cyan-400"
                     >
                       {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
@@ -153,7 +165,7 @@ const App: React.FC = () => {
 
               <button 
                 onClick={performCalculation}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-100 flex items-center justify-center gap-2 transition-all active:scale-95"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-100 flex items-center justify-center gap-2 transition-all active:scale-95 dark:bg-cyan-500 dark:hover:bg-cyan-400 dark:shadow-cyan-900/30"
               >
                 Calcola Netto <ArrowRight size={18} />
               </button>
@@ -161,8 +173,8 @@ const App: React.FC = () => {
 
             {/* Quick Summary Card */}
             {results && (
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-xl">
-                <p className="text-blue-100 text-sm font-medium opacity-80 mb-1 uppercase tracking-wider">Netto Mensile Stimato</p>
+              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-xl dark:from-cyan-500 dark:to-blue-700">
+                <p className="text-blue-100 text-sm font-medium opacity-80 mb-1 uppercase tracking-wider dark:text-cyan-100">Netto Mensile Stimato</p>
                 <div className="text-4xl font-extrabold flex items-baseline gap-1">
                   {results.monthlyNet.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}
                   <span className="text-lg font-normal opacity-70">/mese</span>
@@ -181,9 +193,9 @@ const App: React.FC = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Visual Breakdown */}
-                  <div className="bg-white rounded-2xl border p-6 flex flex-col items-center">
-                    <h3 className="text-lg font-bold text-gray-900 self-start mb-6 flex items-center gap-2">
-                      <PieChartIcon className="text-blue-600" size={20} />
+                  <div className="bg-white rounded-2xl border p-6 flex flex-col items-center dark:bg-slate-800/70 dark:border-slate-700">
+                    <h3 className="text-lg font-bold text-gray-900 self-start mb-6 flex items-center gap-2 dark:text-slate-100">
+                      <PieChartIcon className="text-blue-600 dark:text-cyan-400" size={20} />
                       Breakdown Tasse
                     </h3>
                     <div className="w-full h-64">
@@ -204,18 +216,18 @@ const App: React.FC = () => {
                           </Pie>
                           <Tooltip 
                             formatter={(value: number) => `€${value.toLocaleString()}`}
-                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                            contentStyle={tooltipStyle}
                           />
-                          <Legend verticalAlign="bottom" height={36}/>
+                          <Legend verticalAlign="bottom" height={36} wrapperStyle={legendStyle}/>
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
                   </div>
 
                   {/* Detailed Numbers */}
-                  <div className="bg-white rounded-2xl border p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                      <Building2 className="text-blue-600" size={20} />
+                  <div className="bg-white rounded-2xl border p-6 dark:bg-slate-800/70 dark:border-slate-700">
+                    <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2 dark:text-slate-100">
+                      <Building2 className="text-blue-600 dark:text-cyan-400" size={20} />
                       Voci in Busta Paga
                     </h3>
                     <div className="space-y-4">
@@ -225,7 +237,7 @@ const App: React.FC = () => {
                       <DetailRow label="IRPEF Lorda" value={-(results.irpef + results.deductions)} isNegative />
                       <DetailRow label="Detrazioni Lavoro" value={results.deductions} isPositive />
                       <DetailRow label="Addizionale Reg./Com." value={-(results.regionalTax + results.municipalTax)} isNegative />
-                      <div className="pt-4 border-t">
+                      <div className="pt-4 border-t dark:border-slate-700">
                         <DetailRow label="NETTO ANNUALE" value={results.annualNet} isResult />
                       </div>
                     </div>
@@ -295,12 +307,12 @@ const App: React.FC = () => {
             ) : (
               <div className="h-full flex items-center justify-center min-h-[400px]">
                 <div className="text-center space-y-4">
-                  <div className="bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto">
-                    <Calculator className="text-blue-600 w-8 h-8" />
+                  <div className="bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto dark:bg-slate-800">
+                    <Calculator className="text-blue-600 w-8 h-8 dark:text-cyan-400" />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold">Inizia il Calcolo</h3>
-                    <p className="text-gray-500 max-w-xs mx-auto">Inserisci la tua RAL per visualizzare il breakdown completo dello stipendio netto.</p>
+                    <p className="text-gray-500 max-w-xs mx-auto dark:text-slate-400">Inserisci la tua RAL per visualizzare il breakdown completo dello stipendio netto.</p>
                   </div>
                 </div>
               </div>
@@ -310,7 +322,7 @@ const App: React.FC = () => {
       </main>
 
       {/* Footer Disclaimer */}
-      <footer className="max-w-7xl mx-auto px-4 text-center mt-12 text-gray-400 text-xs">
+      <footer className="max-w-7xl mx-auto px-4 text-center mt-12 text-gray-400 text-xs dark:text-slate-500">
         <p>
           Questo strumento fornisce una stima indicativa basata sulle aliquote IRPEF 2026. 
           I risultati non costituiscono consulenza finanziaria ufficiale.
@@ -328,9 +340,9 @@ const DetailRow: React.FC<{
   isNegative?: boolean; 
   isPositive?: boolean; 
 }> = ({ label, value, isMain, isResult, isNegative, isPositive }) => (
-  <div className={`flex justify-between items-center ${isMain ? 'font-bold text-gray-900' : isResult ? 'font-black text-xl text-blue-600' : 'text-sm text-gray-600'}`}>
+  <div className={`flex justify-between items-center ${isMain ? 'font-bold text-gray-900 dark:text-slate-100' : isResult ? 'font-black text-xl text-blue-600 dark:text-cyan-400' : 'text-sm text-gray-600 dark:text-slate-300'}`}>
     <span>{label}</span>
-    <span className={`${isNegative ? 'text-red-500' : isPositive ? 'text-green-600' : ''}`}>
+    <span className={`${isNegative ? 'text-red-500 dark:text-rose-400' : isPositive ? 'text-green-600 dark:text-emerald-400' : ''}`}>
       {value.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}
     </span>
   </div>
