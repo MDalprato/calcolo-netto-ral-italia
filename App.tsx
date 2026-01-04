@@ -63,6 +63,32 @@ const App: React.FC = () => {
     setInputs(prev => ({ ...prev, [name]: val }));
   };
 
+  const buildEmailLink = () => {
+    if (!results) return '#';
+    const subject = 'Risultato calcolo netto RAL';
+    const body = [
+      'Ciao,',
+      '',
+      'Ecco il risultato del calcolo:',
+      `RAL: ${results.ral.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`,
+      `Mensilita: ${inputs.months}`,
+      `Regione: ${inputs.region}`,
+      '',
+      `Netto mensile: ${results.monthlyNet.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`,
+      `Netto annuale: ${results.annualNet.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`,
+      '',
+      `IRPEF: ${results.irpef.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`,
+      `INPS: ${results.inps.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`,
+      `Addizionali: ${(results.regionalTax + results.municipalTax).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`,
+    ].join('\n');
+
+    return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   // const getAnalysis = async () => {
   //   if (!results) return;
   //   setLoadingAi(true);
@@ -194,15 +220,34 @@ const App: React.FC = () => {
           </section>
 
           <section ref={resultsRef} id="risultati" className="scroll-mt-24 space-y-6">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
-                <span className="px-2.5 py-1 rounded-full bg-slate-200/70 text-slate-600 dark:bg-slate-800/80 dark:text-slate-300">Step 2</span>
-                Risultati
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+                  <span className="px-2.5 py-1 rounded-full bg-slate-200/70 text-slate-600 dark:bg-slate-800/80 dark:text-slate-300">Step 2</span>
+                  Risultati
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Il tuo netto, in dettaglio</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                  Una volta calcolato, scorri per vedere il breakdown completo tra tasse, contributi e netto finale.
+                </p>
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Il tuo netto, in dettaglio</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
-                Una volta calcolato, scorri per vedere il breakdown completo tra tasse, contributi e netto finale.
-              </p>
+              {results && (
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href={buildEmailLink()}
+                    className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                  >
+                    Invia per email
+                  </a>
+                  <button
+                    type="button"
+                    onClick={handlePrint}
+                    className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-blue-700 dark:bg-cyan-500 dark:hover:bg-cyan-400"
+                  >
+                    Stampa
+                  </button>
+                </div>
+              )}
             </div>
 
             {results ? (
